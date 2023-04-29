@@ -1,0 +1,66 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install Apache service
+      yum:
+        name: httpd
+        state: present
+    - name: Create directories for each company
+      file:
+        path: /var/www/{{ item.apache_dir }}/html
+        state: directory
+      loop:
+        - totsuki.local
+        - uahighschool.local
+        - wayne.local
+    - name: Create index.html pages with the company name
+      template:
+        src: index.html.j2
+        dest: /var/www/{{ item.apache_dir }}/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+      loop:
+        - totsuki.local
+        - uahighschool.local
+        - wayne.local
+    - name: Deploy the httpd.conf file
+      copy:
+        src: httpd.conf
+        dest: /etc/httpd/conf/
+        owner: root
+        group: root
+        mode: 0644
+    - name: Create two directories named sites-enabled and sites-available
+      file:
+        path: /etc/httpd/{{ item }}
+        state: directory
+      loop:
+        - sites-enabled
+        - sites-available
+    - name: Deploy the apachetemplate.conf file
+      copy:
+        src: apachetemplate.conf
+        dest: /etc/httpd/sites-available/apachetemplate.conf
+        owner: root
+        group: root
+        mode: 0644
+    - name: Create a symbolic link between the /etc/httpd/sites-available/apachetemplate.conf to /etc/httpd/sites-enabled/apachetemplate.conf
+      file:
+        src: /etc/httpd/sites-available/apachetemplate.conf
+        dest: /etc/httpd/sites-enabled/apachetemplate.conf
+        state: link
+    - name: Restart the Apache service
+      service:
+        name: httpd
+        state: restarted
+    - name: Stop the CentOS firewalls
+      firewalld:
+        state: stopped
+        permanent: yes
+  handlers:
+    - name: Restart the Apache service
+      service:
+        name: httpd
+        state: restarted
