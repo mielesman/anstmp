@@ -11,9 +11,9 @@
         path: /var/www/{{ item.apache_dir }}/html
         state: directory
       loop:
-        - totsuki.local
-        - uahighschool.local
-        - wayne.local
+        - apache_dir: totsuki.local
+        - apache_dir: uahighschool.local
+        - apache_dir: wayne.local
     - name: Create index.html pages with the company name
       template:
         src: index.html.j2
@@ -22,9 +22,9 @@
         group: root
         mode: 0644
       loop:
-        - totsuki.local
-        - uahighschool.local
-        - wayne.local
+        - apache_dir: totsuki.local
+        - apache_dir: uahighschool.local
+        - apache_dir: wayne.local
     - name: Deploy the httpd.conf file
       copy:
         src: httpd.conf
