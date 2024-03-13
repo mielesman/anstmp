@@ -1,0 +1,29 @@
+- name: Create DigitalOcean Droplets
+  hosts: localhost
+  connection: local
+  collections:
+  - community.digitalocean
+
+  vars:
+
+    do_api_token: " add token "
+    loc: "sf03"
+    flavor: "ubuntu-23.10-x64"
+    disk: "s-1vcpu-512mb-10gb"
+    name_prefix: "ubuntu"
+    count: 2
+    ssh: " ssh .pub "
+
+  tasks:
+  - name: Create DigitalOcean Droplets (loop)
+    community.digitalocean.digital_ocean_droplet:
+      state: present
+      name: "{{ name_prefix }}{{ item }}" #
+      region: "{{ loc }}"
+      image: "{{ flavor }}"
+      size: "{{ disk }}"
+      api_token: "{{ do_api_token }}"
+      wait_timeout: 120
+      ssh_keys: "{{ ssh }}"
+    loop: range(0, {{ count }})
+    register: created_droplets
