@@ -43,6 +43,5 @@
     community.digitalocean.digital_ocean_droplet_info:
     oauth_token: "{{oauth_token }}"
 
-
   - name: Import LAMP playbook
     import_playbook: ./anstmp/wordpress-lamp_ubuntu1804/playbook.yml
