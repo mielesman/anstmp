@@ -1,3 +1,13 @@
+
+### For this to work correctly after you have created the droplets you have to add the SSH key you generated. You can do this via the ansible below manually if your having issues.
+### also when you doing the Keygen cmdlt after you cat it to copy, remove the name at the end. 
+
+
+
+
+
+---
+
 - name: Create DigitalOcean Droplets
   hosts: localhost
   connection: local
