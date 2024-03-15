@@ -1,0 +1,48 @@
+
+- name: Create DigitalOcean Droplets
+  hosts: localhost
+  connection: local
+  collections:
+  - community.digitalocean
+  vars_files:
+  - vars/default.yml
+
+  vars:
+
+    do_api_token: " add token "
+    loc: "sfo3"
+    flavor: "ubuntu-23.10-x64"
+    disk: "s-1vcpu-512mb-10gb"
+    name_prefix: "ubuntu"
+    count: 2
+    ssh: " ssh .pub "
+    ip: " {{ (my_droplet.data.droplet.networks.v4 | selectattr('type', 'equalto', 'public')).0.ip_address | default('<none>', true) }} "
+
+  tasks:
+  - name: Create DigitalOcean Droplets (loop)
+    community.digitalocean.digital_ocean_droplet:
+      state: present
+      name: "{{ name_prefix }}{{ item }}" #
+      region: "{{ loc }}"
+      image: "{{ flavor }}"
+      size: "{{ disk }}"
+      api_token: "{{ do_api_token }}"
+      wait_timeout: 120
+      ssh_keys: "{{ ssh }}"
+    loop: range(0, {{ count }})
+    register: created_droplets
+
+  - name: Show Droplet info
+    ansible.builtin.debug:
+      msg: |
+        Droplet ID is {{ my_droplet.data.droplet.id }}
+        First Public IPv4 is {{ (my_droplet.data.droplet.networks.v4 | selectattr('type', 'equalto', 'public')).0.ip_address | default('<none>', true) }}
+        First Private IPv4 is {{ (my_droplet.data.droplet.networks.v4 | selectattr('type', 'equalto', 'private')).0.ip_address | default('<none>', true) }}
+
+  - name: Set droplet IP to default
+    community.digitalocean.digital_ocean_droplet_info:
+    oauth_token: "{{oauth_token }}"
+
+
+  - name: Import LAMP playbook
+    import_playbook: ./anstmp/wordpress-lamp_ubuntu1804/playbook.yml
