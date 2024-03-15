@@ -1,4 +1,4 @@
-
+---
 - name: Create DigitalOcean Droplets
   hosts: localhost
   connection: local
