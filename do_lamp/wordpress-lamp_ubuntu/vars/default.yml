@@ -1,6 +1,5 @@
----
 #System Settings
-php_modules: [ 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip' ]
+php_modules: ['php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip']
 
 #MySQL Settings
 mysql_root_password: "Password1$"
@@ -9,6 +8,6 @@ mysql_user: "root"
 mysql_password: "Password1$"
 
 #HTTP Settings
-http_host: "{{ ip }}"
+http_host: "dodrops.mieles"
 http_conf: "dodrops.conf"
 http_port: "80"

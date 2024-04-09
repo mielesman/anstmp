@@ -1,13 +1,7 @@
 
 ### For this to work correctly after you have created the droplets you have to add the SSH key you generated. You can do this via the ansible below manually if your having issues.
 ### also when you doing the Keygen cmdlt after you cat it to copy, remove the name at the end. 
-
-
-
-
-
 ---
-
 - name: Create DigitalOcean Droplets
   hosts: localhost
   connection: local
@@ -16,13 +10,13 @@
 
   vars:
 
-    do_api_token: " add token "
-    loc: "sf03"
-    flavor: "ubuntu-23.10-x64"
-    disk: "s-1vcpu-512mb-10gb"
-    name_prefix: "ubuntu"
+    do_api_token: " dop_v1_da32d14757acdeba3a23a75767d1b12accf1653f4983e404270f0c24beb5c858 "
+    loc: "nyc3"
+    flavor: "centos-7-x64"
+    disk: "centos-s-1vcpu-1gb-nyc3-01"
+    name_prefix: "CentOS"
     count: 2
-    ssh: " ssh .pub "
+    ssh: "37:d8:bf:1c:c3:9b:dc:20:2d:d4:b1:ea:01:9b:be:71"
 
   tasks:
   - name: Create DigitalOcean Droplets (loop)
@@ -35,5 +29,24 @@
       api_token: "{{ do_api_token }}"
       wait_timeout: 120
       ssh_keys: "{{ ssh }}"
-    loop: range(0, {{ count }})
+    loop:
+    - 0
+    - 1
     register: created_droplets
+
+
+  - name: "creating ssh key"
+    user: 
+      name={{ ansible_user_id }} 
+      generate_ssh_key=yes
+      ssh_key_file=.ssh/id_rsa
+      
+  - name: "Creating DO SSH key"
+    community.digitalocean.digital_ocean:
+      state=present 
+      command=ssh  
+      name=AlbertoMieles 
+      ssh_pub_key={{ Lookup('file', '~/.ssh/id_rsa.pub') }} 
+      api_token= {{ do_api_token }}
+    register: ssh_key
+
